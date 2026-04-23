@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pick Your Path — Splash Sports</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0A0E1A;
+    --card-bg: #141927;
+    --card-border: #1E2538;
+    --accent: #1BC4CF;
+    --conflict: #FF8C00;
+    --text: #FFFFFF;
+    --text-secondary: #8B9BB4;
+    --used-opacity: 0.4;
+    --radius-card: 12px;
+    --radius-btn: 8px;
+    --footer-h: 64px;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'Inter', BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #app { min-height: 100vh; }
+
+  /* ── LANDING ───────────────────────────────────────────── */
+  .landing {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    text-align: center;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,210,106,0.08) 0%, transparent 70%);
+  }
+
+  .landing-logo {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+
+  .landing-title {
+    font-size: clamp(40px, 8vw, 72px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 24px;
+    max-width: 700px;
+  }
+
+  .landing-title span { color: var(--accent); }
+
+  .landing-desc {
+    font-size: clamp(15px, 2.5vw, 18px);
+    color: var(--text-secondary);
+    max-width: 520px;
+    line-height: 1.65;
+    margin-bottom: 40px;
+  }
+
+  .btn-cta {
+    display: block;
+    width: 100%;
+    max-width: 360px;
+    padding: 18px 32px;
+    background: var(--accent);
+    color: #0A0E1A;
+    font-size: 17px;
+    font-weight: 700;
+    border: none;
+    border-radius: var(--radius-btn);
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-cta:active { transform: translateY(0); }
+
+  .landing-meta {
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  /* ── PICK SCREEN ───────────────────────────────────────── */
+  .pick-screen {
+    min-height: 100vh;
+    padding-bottom: calc(var(--footer-h) + 16px);
+  }
+
+  /* Header */
+  .pick-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 14, 26, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--card-border);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 14px 20px;
+    gap: 12px;
+  }
+
+  .header-logo {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .header-round {
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .header-progress {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* Round intro */
+  .round-intro {
+    padding: 24px 20px 8px;
+    text-align: center;
+  }
+
+  .round-intro h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .round-intro p {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  /* Matchup grid */
+  .matchup-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 16px 16px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 767px) {
+    .matchup-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Matchup card */
+  .matchup-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .matchup-card.both-used {
+    opacity: var(--used-opacity);
+    pointer-events: none;
+  }
+
+  .card-time {
+    padding: 8px 14px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .team-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: background 0.18s;
+    position: relative;
+    min-height: 60px;
+  }
+
+  .team-row:hover:not(.used-team) { background: rgba(255,255,255,0.04); }
+
+  .team-row.selected-team {
+    background: rgba(0, 210, 106, 0.1);
+  }
+
+  .team-row.used-team {
+    opacity: var(--used-opacity);
+    cursor: not-allowed;
+  }
+
+  .team-logo {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    flex-shrink: 0;
+    border-radius: 4px;
+  }
+
+  .team-info { flex: 1; min-width: 0; }
+
+  .team-name {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .team-spread {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 1px;
+  }
+
+  .team-used-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--conflict);
+    margin-top: 2px;
+    letter-spacing: 0.04em;
+  }
+
+  .check-badge {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+
+  .check-badge svg { width: 13px; height: 13px; }
+
+  .team-row.selected-team .check-badge { transform: scale(1.1); }
+
+  .vs-sep {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .vs-sep::before, .vs-sep::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--card-border);
+  }
+
+  /* Selected card border */
+  .matchup-card.has-selection {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), 0 4px 20px rgba(0,210,106,0.12);
+  }
+
+  /* ── FOOTER NAV ────────────────────────────────────────── */
+  .footer-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--footer-h);
+    background: rgba(10, 14, 26, 0.97);
+    border-top: 1px solid var(--card-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    padding: 0 12px;
+    gap: 6px;
+  }
+
+  .footer-nav::-webkit-scrollbar { display: none; }
+
+  .footer-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--card-border);
+    flex-shrink: 0;
+    margin: 0 4px;
+  }
+
+  .nav-pill {
+    flex-shrink: 0;
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    border: 1.5px solid var(--card-border);
+    background: transparent;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .nav-pill:hover { border-color: rgba(255,255,255,0.3); color: var(--text); }
+
+  .nav-pill.current {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0A0E1A;
+  }
+
+  .nav-pill.picked {
+    background: #1E2538;
+    border-color: #1E2538;
+    color: var(--text);
+  }
+
+  .nav-pill.conflict {
+    border-color: var(--conflict);
+    color: var(--conflict);
+    background: rgba(255, 140, 0, 0.1);
+  }
+
+  .nav-pill .pill-check {
+    display: inline-block;
+    margin-left: 3px;
+    font-size: 9px;
+  }
+
+  /* ── SUMMARY ───────────────────────────────────────────── */
+  .summary-screen {
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  .summary-header {
+    text-align: center;
+    padding: 48px 24px 32px;
+    background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(0,210,106,0.1) 0%, transparent 70%);
+  }
+
+  .summary-wordmark {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .summary-title {
+    font-size: clamp(36px, 7vw, 60px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .summary-sub {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 440px;
+    margin: 0 auto;
+    line-height: 1.55;
+  }
+
+  .summary-body {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  .summary-section-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    padding: 24px 0 10px;
+    border-bottom: 1px solid var(--card-border);
+    margin-bottom: 4px;
+  }
+
+  .summary-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px solid rgba(30,37,56,0.6);
+  }
+
+  .summary-round-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    width: 110px;
+    flex-shrink: 0;
+  }
+
+  .summary-team-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .summary-team-name {
+    font-size: 15px;
+    font-weight: 700;
+    flex: 1;
+  }
+
+  .summary-vs {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .summary-empty {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  .summary-actions {
+    max-width: 640px;
+    margin: 32px auto 0;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-share {
+    width: 100%;
+    padding: 16px;
+    background: var(--accent);
+    color: #0A0E1A;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    border-radius: var(--radius-btn);
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+
+  .btn-share:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .btn-edit-link {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.15s;
+  }
+
+  .btn-edit-link:hover { color: var(--text); }
+
+  /* Conflict banner */
+  .conflict-banner {
+    margin: 12px 16px 0;
+    padding: 10px 14px;
+    background: rgba(255, 140, 0, 0.12);
+    border: 1px solid rgba(255, 140, 0, 0.4);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--conflict);
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Scroll snap helper for footer */
+  .footer-nav { scroll-behavior: smooth; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+
+const TEAMS = {
+  kc:  { name: 'Kansas City Chiefs',       abbr: 'KC'  },
+  bal: { name: 'Baltimore Ravens',         abbr: 'BAL' },
+  buf: { name: 'Buffalo Bills',            abbr: 'BUF' },
+  cin: { name: 'Cincinnati Bengals',       abbr: 'CIN' },
+  cle: { name: 'Cleveland Browns',         abbr: 'CLE' },
+  den: { name: 'Denver Broncos',           abbr: 'DEN' },
+  hou: { name: 'Houston Texans',           abbr: 'HOU' },
+  ind: { name: 'Indianapolis Colts',       abbr: 'IND' },
+  jax: { name: 'Jacksonville Jaguars',     abbr: 'JAX' },
+  lac: { name: 'LA Chargers',              abbr: 'LAC' },
+  lv:  { name: 'Las Vegas Raiders',        abbr: 'LV'  },
+  mia: { name: 'Miami Dolphins',           abbr: 'MIA' },
+  ne:  { name: 'New England Patriots',     abbr: 'NE'  },
+  nyj: { name: 'New York Jets',            abbr: 'NYJ' },
+  pit: { name: 'Pittsburgh Steelers',      abbr: 'PIT' },
+  ten: { name: 'Tennessee Titans',         abbr: 'TEN' },
+  ari: { name: 'Arizona Cardinals',        abbr: 'ARI' },
+  atl: { name: 'Atlanta Falcons',          abbr: 'ATL' },
+  car: { name: 'Carolina Panthers',        abbr: 'CAR' },
+  chi: { name: 'Chicago Bears',            abbr: 'CHI' },
+  dal: { name: 'Dallas Cowboys',           abbr: 'DAL' },
+  det: { name: 'Detroit Lions',            abbr: 'DET' },
+  gb:  { name: 'Green Bay Packers',        abbr: 'GB'  },
+  lar: { name: 'LA Rams',                  abbr: 'LAR' },
+  min: { name: 'Minnesota Vikings',        abbr: 'MIN' },
+  no:  { name: 'New Orleans Saints',       abbr: 'NO'  },
+  nyg: { name: 'New York Giants',          abbr: 'NYG' },
+  phi: { name: 'Philadelphia Eagles',      abbr: 'PHI' },
+  sf:  { name: 'San Francisco 49ers',      abbr: 'SF'  },
+  sea: { name: 'Seattle Seahawks',         abbr: 'SEA' },
+  tb:  { name: 'Tampa Bay Buccaneers',     abbr: 'TB'  },
+  wsh: { name: 'Washington Commanders',    abbr: 'WSH' },
+};
+
+// Bye weeks: key = abbr lowercase, value = week number (1-indexed)
+const BYE_WEEKS = {
+  kc:5, bal:5, ari:5, atl:5,
+  buf:6, cin:6, car:6, chi:6,
+  cle:7, den:7, dal:7, det:7,
+  hou:8, ind:8, gb:8, lar:8,
+  jax:9, lac:9, min:9, no:9,
+  lv:10, mia:10, nyg:10, phi:10,
+  ne:11, nyj:11, sf:11, sea:11,
+  pit:12, ten:12, tb:12, wsh:12,
+};
+
+// Helper to build a game object
+const g = (away, home, time, spread, label) => ({ away, home, time, spread, label });
+// spread: positive => away favored by |spread|, negative => home favored by |spread|
+// Actually we encode as: favored team gets the negative number, other gets +
+// We'll store as { awaySpread, homeSpread }
+const game = (away, home, time, favoredTeam, spreadVal) => {
+  const awaySpread = favoredTeam === away ? `-${spreadVal}` : `+${spreadVal}`;
+  const homeSpread = favoredTeam === home ? `-${spreadVal}` : `+${spreadVal}`;
+  return { away, home, time, awaySpread, homeSpread };
+};
+
+const ROUNDS = [
+  // ── WEEK 1 ──────────────────────────────────────────────────
+  {
+    label: 'Week 1', short: 'W1', date: 'Sep 4–8, 2025',
+    games: [
+      game('kc','phi','Thu 8:20 PM ET','kc',3.5),
+      game('buf','bal','Sun 1:00 PM ET','bal',1.5),
+      game('det','gb','Sun 1:00 PM ET','gb',2.5),
+      game('cin','cle','Sun 1:00 PM ET','cin',1.5),
+      game('pit','nyj','Sun 1:00 PM ET','pit',2.5),
+      game('mia','ne','Sun 1:00 PM ET','mia',4.5),
+      game('atl','car','Sun 1:00 PM ET','atl',6.5),
+      game('no','tb','Sun 1:00 PM ET','tb',3.5),
+      game('dal','hou','Sun 1:00 PM ET','hou',2.5),
+      game('ind','ten','Sun 4:25 PM ET','ind',1.5),
+      game('den','lv','Sun 4:25 PM ET','den',2.5),
+      game('lac','lar','Sun 4:25 PM ET','lar',2.5),
+      game('ari','sea','Sun 4:25 PM ET','sea',6.5),
+      game('sf','min','Sun 8:20 PM ET','min',1.5),
+      game('nyg','wsh','Sun 8:20 PM ET','wsh',3.5),
+      game('chi','jax','Mon 8:15 PM ET','chi',1.5),
+    ]
+  },
+  // ── WEEK 2 ──────────────────────────────────────────────────
+  {
+    label: 'Week 2', short: 'W2', date: 'Sep 11–15, 2025',
+    games: [
+      game('phi','dal','Thu 8:20 PM ET','phi',5.5),
+      game('bal','lac','Sun 1:00 PM ET','bal',4.5),
+      game('gb','min','Sun 1:00 PM ET','min',1.5),
+      game('cle','pit','Sun 1:00 PM ET','pit',2.5),
+      game('nyj','ne','Sun 1:00 PM ET','nyj',3.5),
+      game('tb','atl','Sun 1:00 PM ET','tb',1.5),
+      game('hou','ind','Sun 1:00 PM ET','hou',3.5),
+      game('ten','mia','Sun 1:00 PM ET','mia',5.5),
+      game('car','chi','Sun 1:00 PM ET','chi',2.5),
+      game('jax','den','Sun 4:25 PM ET','den',3.5),
+      game('sea','sf','Sun 4:25 PM ET','sf',2.5),
+      game('lar','ari','Sun 4:25 PM ET','lar',6.5),
+      game('lv','cin','Sun 4:25 PM ET','cin',4.5),
+      game('kc','buf','Sun 8:20 PM ET','kc',2.5),
+      game('wsh','nyg','Sun 8:20 PM ET','wsh',3.5),
+      game('det','no','Mon 8:15 PM ET','det',3.5),
+    ]
+  },
+  // ── WEEK 3 ──────────────────────────────────────────────────
+  {
+    label: 'Week 3', short: 'W3', date: 'Sep 18–22, 2025',
+    games: [
+      game('min','gb','Thu 8:20 PM ET','gb',1.5),
+      game('buf','mia','Sun 1:00 PM ET','buf',2.5),
+      game('lac','kc','Sun 1:00 PM ET','kc',5.5),
+      game('ind','jax','Sun 1:00 PM ET','ind',3.5),
+      game('ne','pit','Sun 1:00 PM ET','pit',3.5),
+      game('no','car','Sun 1:00 PM ET','no',4.5),
+      game('chi','tb','Sun 1:00 PM ET','tb',3.5),
+      game('dal','nyg','Sun 1:00 PM ET','dal',6.5),
+      game('nyj','wsh','Sun 4:25 PM ET','nyj',1.5),
+      game('den','sea','Sun 4:25 PM ET','sea',1.5),
+      game('sf','lar','Sun 4:25 PM ET','sf',3.5),
+      game('cin','bal','Sun 4:25 PM ET','bal',4.5),
+      game('atl','det','Sun 8:20 PM ET','det',2.5),
+      game('hou','ten','Sun 8:20 PM ET','hou',4.5),
+      game('ari','lv','Sun 8:20 PM ET','ari',2.5),
+      game('phi','cle','Mon 8:15 PM ET','phi',7.5),
+    ]
+  },
+  // ── WEEK 4 ──────────────────────────────────────────────────
+  {
+    label: 'Week 4', short: 'W4', date: 'Sep 25–29, 2025',
+    games: [
+      game('det','sea','Thu 8:20 PM ET','det',3.5),
+      game('kc','cle','Sun 1:00 PM ET','kc',8.5),
+      game('bal','buf','Sun 1:00 PM ET','bal',2.5),
+      game('pit','ind','Sun 1:00 PM ET','pit',1.5),
+      game('gb','car','Sun 1:00 PM ET','gb',7.5),
+      game('tb','no','Sun 1:00 PM ET','tb',2.5),
+      game('mia','nyj','Sun 1:00 PM ET','mia',3.5),
+      game('chi','lar','Sun 1:00 PM ET','lar',4.5),
+      game('ten','hou','Sun 4:25 PM ET','hou',5.5),
+      game('wsh','phi','Sun 4:25 PM ET','phi',5.5),
+      game('jax','lac','Sun 4:25 PM ET','lac',2.5),
+      game('sf','ari','Sun 4:25 PM ET','sf',8.5),
+      game('lv','den','Sun 8:20 PM ET','den',3.5),
+      game('nyg','dal','Sun 8:20 PM ET','dal',4.5),
+      game('ne','atl','Sun 8:20 PM ET','atl',3.5),
+      game('cin','min','Mon 8:15 PM ET','min',2.5),
+    ]
+  },
+  // ── WEEK 5 — BYE: KC, BAL, ARI, ATL ────────────────────────
+  {
+    label: 'Week 5', short: 'W5', date: 'Oct 2–6, 2025',
+    byeTeams: ['KC','BAL','ARI','ATL'],
+    games: [
+      game('phi','dal','Thu 8:20 PM ET','phi',3.5),
+      game('buf','cle','Sun 1:00 PM ET','buf',5.5),
+      game('gb','no','Sun 1:00 PM ET','gb',3.5),
+      game('pit','ten','Sun 1:00 PM ET','pit',3.5),
+      game('ind','mia','Sun 1:00 PM ET','mia',2.5),
+      game('tb','car','Sun 1:00 PM ET','tb',5.5),
+      game('hou','jax','Sun 1:00 PM ET','hou',4.5),
+      game('lac','den','Sun 4:25 PM ET','den',1.5),
+      game('lv','sea','Sun 4:25 PM ET','sea',3.5),
+      game('lar','sf','Sun 4:25 PM ET','sf',2.5),
+      game('det','min','Sun 8:20 PM ET','det',2.5),
+      game('ne','nyj','Sun 8:20 PM ET','nyj',1.5),
+      game('nyg','wsh','Sun 8:20 PM ET','wsh',4.5),
+      game('cin','chi','Mon 8:15 PM ET','cin',3.5),
+    ]
+  },
+  // ── WEEK 6 — BYE: BUF, CIN, CAR, CHI ───────────────────────
+  {
+    label: 'Week 6', short: 'W6', date: 'Oct 9–13, 2025',
+    byeTeams: ['BUF','CIN','CAR','CHI'],
+    games: [
+      game('kc','den','Thu 8:20 PM ET','kc',5.5),
+      game('bal','cle','Sun 1:00 PM ET','bal',6.5),
+      game('ind','jax','Sun 1:00 PM ET','ind',2.5),
+      game('tb','atl','Sun 1:00 PM ET','tb',1.5),
+      game('phi','nyg','Sun 1:00 PM ET','phi',7.5),
+      game('wsh','dal','Sun 1:00 PM ET','dal',3.5),
+      game('sea','lar','Sun 4:25 PM ET','lar',1.5),
+      game('lv','lac','Sun 4:25 PM ET','lac',3.5),
+      game('sf','no','Sun 4:25 PM ET','sf',5.5),
+      game('gb','det','Sun 4:25 PM ET','det',1.5),
+      game('ten','ne','Sun 8:20 PM ET','ten',1.5),
+      game('hou','mia','Sun 8:20 PM ET','hou',3.5),
+      game('min','pit','Sun 8:20 PM ET','min',2.5),
+      game('nyj','ari','Mon 8:15 PM ET','nyj',4.5),
+    ]
+  },
+  // ── WEEK 7 — BYE: CLE, DEN, DAL, DET ───────────────────────
+  {
+    label: 'Week 7', short: 'W7', date: 'Oct 16–20, 2025',
+    byeTeams: ['CLE','DEN','DAL','DET'],
+    games: [
+      game('min','gb','Thu 8:20 PM ET','gb',2.5),
+      game('buf','kc','Sun 1:00 PM ET','kc',2.5),
+      game('bal','pit','Sun 1:00 PM ET','bal',5.5),
+      game('cin','nyj','Sun 1:00 PM ET','cin',4.5),
+      game('hou','ind','Sun 1:00 PM ET','hou',3.5),
+      game('atl','tb','Sun 1:00 PM ET','tb',1.5),
+      game('car','wsh','Sun 1:00 PM ET','wsh',3.5),
+      game('lar','sea','Sun 4:25 PM ET','sea',2.5),
+      game('lac','lv','Sun 4:25 PM ET','lac',4.5),
+      game('sf','ari','Sun 4:25 PM ET','sf',7.5),
+      game('ne','no','Sun 8:20 PM ET','no',3.5),
+      game('phi','ten','Sun 8:20 PM ET','phi',6.5),
+      game('nyg','mia','Sun 8:20 PM ET','mia',3.5),
+      game('chi','jax','Mon 8:15 PM ET','chi',1.5),
+    ]
+  },
+  // ── WEEK 8 — BYE: HOU, IND, GB, LAR ────────────────────────
+  {
+    label: 'Week 8', short: 'W8', date: 'Oct 23–27, 2025',
+    byeTeams: ['HOU','IND','GB','LAR'],
+    games: [
+      game('phi','dal','Thu 8:20 PM ET','phi',4.5),
+      game('kc','lv','Sun 1:00 PM ET','kc',9.5),
+      game('bal','cin','Sun 1:00 PM ET','bal',3.5),
+      game('buf','ne','Sun 1:00 PM ET','buf',8.5),
+      game('pit','den','Sun 1:00 PM ET','pit',2.5),
+      game('min','atl','Sun 1:00 PM ET','min',3.5),
+      game('tb','car','Sun 1:00 PM ET','tb',6.5),
+      game('det','sea','Sun 4:25 PM ET','det',4.5),
+      game('sea','sf','Sun 4:25 PM ET','sf',3.5),
+      game('no','chi','Sun 4:25 PM ET','no',2.5),
+      game('nyj','mia','Sun 8:20 PM ET','mia',3.5),
+      game('cle','wsh','Sun 8:20 PM ET','cle',2.5),
+      game('nyg','jax','Sun 8:20 PM ET','jax',1.5),
+      game('ten','lac','Mon 8:15 PM ET','lac',3.5),
+    ]
+  },
+  // ── WEEK 9 — BYE: JAX, LAC, MIN, NO ────────────────────────
+  {
+    label: 'Week 9', short: 'W9', date: 'Oct 30–Nov 3, 2025',
+    byeTeams: ['JAX','LAC','MIN','NO'],
+    games: [
+      game('gb','det','Thu 8:20 PM ET','det',2.5),
+      game('kc','bal','Sun 1:00 PM ET','kc',1.5),
+      game('buf','pit','Sun 1:00 PM ET','buf',4.5),
+      game('cin','cle','Sun 1:00 PM ET','cin',3.5),
+      game('hou','ten','Sun 1:00 PM ET','hou',5.5),
+      game('ind','ne','Sun 1:00 PM ET','ind',3.5),
+      game('sea','lar','Sun 4:25 PM ET','lar',2.5),
+      game('sf','lv','Sun 4:25 PM ET','sf',7.5),
+      game('ari','atl','Sun 4:25 PM ET','atl',2.5),
+      game('car','nyj','Sun 4:25 PM ET','nyj',3.5),
+      game('dal','nyg','Sun 8:20 PM ET','dal',5.5),
+      game('den','lac','Sun 8:20 PM ET','lac',1.5),
+      game('phi','wsh','Sun 8:20 PM ET','phi',6.5),
+      game('chi','tb','Mon 8:15 PM ET','tb',4.5),
+    ]
+  },
+  // ── WEEK 10 — BYE: LV, MIA, NYG, PHI ───────────────────────
+  {
+    label: 'Week 10', short: 'W10', date: 'Nov 6–10, 2025',
+    byeTeams: ['LV','MIA','NYG','PHI'],
+    games: [
+      game('bal','cin','Thu 8:20 PM ET','bal',4.5),
+      game('kc','den','Sun 1:00 PM ET','kc',7.5),
+      game('buf','ind','Sun 1:00 PM ET','buf',5.5),
+      game('cle','pit','Sun 1:00 PM ET','pit',1.5),
+      game('det','gb','Sun 1:00 PM ET','det',3.5),
+      game('atl','no','Sun 1:00 PM ET','no',1.5),
+      game('tb','car','Sun 1:00 PM ET','tb',7.5),
+      game('min','jax','Sun 4:25 PM ET','min',6.5),
+      game('lar','sea','Sun 4:25 PM ET','lar',2.5),
+      game('lac','hou','Sun 4:25 PM ET','hou',2.5),
+      game('sf','chi','Sun 8:20 PM ET','sf',9.5),
+      game('ten','wsh','Sun 8:20 PM ET','ten',1.5),
+      game('ne','dal','Sun 8:20 PM ET','dal',5.5),
+      game('nyj','ari','Mon 8:15 PM ET','nyj',3.5),
+    ]
+  },
+  // ── WEEK 11 — BYE: NE, NYJ, SF, SEA ────────────────────────
+  {
+    label: 'Week 11', short: 'W11', date: 'Nov 13–17, 2025',
+    byeTeams: ['NE','NYJ','SF','SEA'],
+    games: [
+      game('pit','bal','Thu 8:20 PM ET','bal',3.5),
+      game('kc','cin','Sun 1:00 PM ET','kc',5.5),
+      game('buf','cle','Sun 1:00 PM ET','buf',6.5),
+      game('ind','ten','Sun 1:00 PM ET','ind',2.5),
+      game('atl','car','Sun 1:00 PM ET','atl',5.5),
+      game('no','tb','Sun 1:00 PM ET','tb',2.5),
+      game('dal','nyg','Sun 1:00 PM ET','dal',7.5),
+      game('chi','min','Sun 4:25 PM ET','min',7.5),
+      game('den','lv','Sun 4:25 PM ET','den',4.5),
+      game('lar','ari','Sun 4:25 PM ET','lar',5.5),
+      game('lac','jax','Sun 8:20 PM ET','lac',4.5),
+      game('phi','wsh','Sun 8:20 PM ET','phi',5.5),
+      game('det','hou','Sun 8:20 PM ET','det',2.5),
+      game('gb','mia','Mon 8:15 PM ET','gb',3.5),
+    ]
+  },
+  // ── WEEK 12 — BYE: PIT, TEN, TB, WSH ───────────────────────
+  {
+    label: 'Week 12', short: 'W12', date: 'Nov 20–24, 2025',
+    byeTeams: ['PIT','TEN','TB','WSH'],
+    games: [
+      game('chi','min','Thu 8:20 PM ET','min',6.5),
+      game('kc','lac','Sun 1:00 PM ET','kc',5.5),
+      game('bal','den','Sun 1:00 PM ET','bal',6.5),
+      game('buf','nyj','Sun 1:00 PM ET','buf',7.5),
+      game('cin','cle','Sun 1:00 PM ET','cin',4.5),
+      game('hou','ind','Sun 1:00 PM ET','hou',3.5),
+      game('gb','atl','Sun 1:00 PM ET','gb',2.5),
+      game('no','car','Sun 1:00 PM ET','no',5.5),
+      game('det','sf','Sun 4:25 PM ET','det',1.5),
+      game('sea','lar','Sun 4:25 PM ET','lar',2.5),
+      game('lv','jax','Sun 4:25 PM ET','lv',2.5),
+      game('dal','nyg','Sun 4:25 PM ET','dal',6.5),
+      game('phi','ne','Sun 8:20 PM ET','phi',8.5),
+      game('min','sea','Sun 8:20 PM ET','min',3.5),
+      game('ari','mia','Sun 8:20 PM ET','mia',2.5),
+      game('den','lv','Mon 8:15 PM ET','den',3.5),
+    ]
+  },
+  // ── WEEK 13 ──────────────────────────────────────────────────
+  {
+    label: 'Week 13', short: 'W13', date: 'Nov 27–Dec 1, 2025',
+    games: [
+      game('phi','dal','Thu 4:30 PM ET','phi',4.5),
+      game('min','chi','Thu 8:20 PM ET','min',8.5),
+      game('kc','lv','Sun 1:00 PM ET','kc',10.5),
+      game('bal','pit','Sun 1:00 PM ET','bal',4.5),
+      game('buf','ne','Sun 1:00 PM ET','buf',9.5),
+      game('cin','ind','Sun 1:00 PM ET','cin',4.5),
+      game('cle','den','Sun 1:00 PM ET','den',1.5),
+      game('hou','ten','Sun 1:00 PM ET','hou',6.5),
+      game('atl','no','Sun 1:00 PM ET','atl',2.5),
+      game('car','tb','Sun 1:00 PM ET','tb',8.5),
+      game('jax','lac','Sun 4:25 PM ET','lac',4.5),
+      game('sf','lar','Sun 4:25 PM ET','sf',3.5),
+      game('sea','ari','Sun 4:25 PM ET','sea',5.5),
+      game('wsh','nyg','Sun 8:20 PM ET','wsh',3.5),
+      game('det','gb','Sun 8:20 PM ET','det',2.5),
+      game('mia','nyj','Mon 8:15 PM ET','mia',4.5),
+    ]
+  },
+  // ── WEEK 14 ──────────────────────────────────────────────────
+  {
+    label: 'Week 14', short: 'W14', date: 'Dec 4–8, 2025',
+    games: [
+      game('bal','cle','Thu 8:20 PM ET','bal',7.5),
+      game('kc','den','Sun 1:00 PM ET','kc',8.5),
+      game('buf','lac','Sun 1:00 PM ET','buf',4.5),
+      game('cin','pit','Sun 1:00 PM ET','pit',1.5),
+      game('hou','jax','Sun 1:00 PM ET','hou',5.5),
+      game('ind','ne','Sun 1:00 PM ET','ind',4.5),
+      game('ten','nyj','Sun 1:00 PM ET','ten',2.5),
+      game('gb','sea','Sun 1:00 PM ET','sea',1.5),
+      game('det','chi','Sun 4:25 PM ET','det',9.5),
+      game('min','ari','Sun 4:25 PM ET','min',7.5),
+      game('lar','sf','Sun 4:25 PM ET','sf',2.5),
+      game('dal','phi','Sun 4:25 PM ET','phi',3.5),
+      game('nyg','wsh','Sun 8:20 PM ET','wsh',2.5),
+      game('atl','tb','Sun 8:20 PM ET','tb',1.5),
+      game('no','car','Sun 8:20 PM ET','no',4.5),
+      game('mia','lv','Mon 8:15 PM ET','mia',5.5),
+    ]
+  },
+  // ── WEEK 15 ──────────────────────────────────────────────────
+  {
+    label: 'Week 15', short: 'W15', date: 'Dec 11–15, 2025',
+    games: [
+      game('pit','cin','Thu 8:20 PM ET','pit',1.5),
+      game('kc','buf','Sun 1:00 PM ET','kc',3.5),
+      game('bal','nyj','Sun 1:00 PM ET','bal',7.5),
+      game('cle','ind','Sun 1:00 PM ET','ind',3.5),
+      game('hou','ne','Sun 1:00 PM ET','hou',8.5),
+      game('atl','car','Sun 1:00 PM ET','atl',7.5),
+      game('tb','no','Sun 1:00 PM ET','tb',3.5),
+      game('dal','wsh','Sun 1:00 PM ET','dal',3.5),
+      game('gb','chi','Sun 4:25 PM ET','gb',6.5),
+      game('min','sea','Sun 4:25 PM ET','min',4.5),
+      game('det','lar','Sun 4:25 PM ET','det',3.5),
+      game('phi','nyg','Sun 4:25 PM ET','phi',8.5),
+      game('sf','lv','Sun 8:20 PM ET','sf',9.5),
+      game('lac','den','Sun 8:20 PM ET','lac',2.5),
+      game('jax','ten','Sun 8:20 PM ET','ten',1.5),
+      game('mia','ari','Mon 8:15 PM ET','mia',4.5),
+    ]
+  },
+  // ── WEEK 16 ──────────────────────────────────────────────────
+  {
+    label: 'Week 16', short: 'W16', date: 'Dec 18–22, 2025',
+    games: [
+      game('nyg','phi','Thu 8:20 PM ET','phi',9.5),
+      game('kc','pit','Sun 1:00 PM ET','kc',6.5),
+      game('bal','hou','Sun 1:00 PM ET','bal',3.5),
+      game('buf','den','Sun 1:00 PM ET','buf',5.5),
+      game('cin','lac','Sun 1:00 PM ET','cin',3.5),
+      game('cle','ten','Sun 1:00 PM ET','cle',2.5),
+      game('ind','jax','Sun 1:00 PM ET','ind',4.5),
+      game('gb','min','Sun 4:25 PM ET','min',2.5),
+      game('det','sea','Sun 4:25 PM ET','det',5.5),
+      game('sf','ari','Sun 4:25 PM ET','sf',11.5),
+      game('lar','chi','Sun 4:25 PM ET','lar',7.5),
+      game('no','atl','Sun 8:20 PM ET','atl',2.5),
+      game('car','wsh','Sun 8:20 PM ET','wsh',5.5),
+      game('ne','mia','Sun 8:20 PM ET','mia',5.5),
+      game('nyj','dal','Sun 8:20 PM ET','dal',4.5),
+      game('tb','lv','Mon 8:15 PM ET','tb',4.5),
+    ]
+  },
+  // ── WEEK 17 ──────────────────────────────────────────────────
+  {
+    label: 'Week 17', short: 'W17', date: 'Dec 25–29, 2025',
+    games: [
+      game('kc','pit','Thu 1:00 PM ET','kc',7.5),
+      game('sf','det','Thu 4:30 PM ET','det',1.5),
+      game('bal','buf','Sun 1:00 PM ET','bal',2.5),
+      game('cin','den','Sun 1:00 PM ET','cin',2.5),
+      game('cle','jax','Sun 1:00 PM ET','cle',3.5),
+      game('hou','lac','Sun 1:00 PM ET','hou',3.5),
+      game('ind','ne','Sun 1:00 PM ET','ind',5.5),
+      game('atl','no','Sun 1:00 PM ET','atl',3.5),
+      game('tb','car','Sun 4:25 PM ET','tb',9.5),
+      game('chi','gb','Sun 4:25 PM ET','gb',7.5),
+      game('min','lar','Sun 4:25 PM ET','min',3.5),
+      game('phi','dal','Sun 4:25 PM ET','phi',4.5),
+      game('sea','ari','Sun 8:20 PM ET','sea',4.5),
+      game('mia','ten','Sun 8:20 PM ET','mia',3.5),
+      game('nyg','wsh','Sun 8:20 PM ET','wsh',4.5),
+      game('nyj','lv','Mon 8:15 PM ET','nyj',2.5),
+    ]
+  },
+  // ── WEEK 18 ──────────────────────────────────────────────────
+  {
+    label: 'Week 18', short: 'W18', date: 'Jan 2–4, 2026',
+    games: [
+      game('phi','nyg','Sun 1:00 PM ET','phi',10.5),
+      game('kc','lac','Sun 1:00 PM ET','kc',6.5),
+      game('bal','cle','Sun 1:00 PM ET','bal',8.5),
+      game('buf','nyj','Sun 1:00 PM ET','buf',8.5),
+      game('cin','pit','Sun 1:00 PM ET','cin',3.5),
+      game('den','ind','Sun 1:00 PM ET','ind',1.5),
+      game('hou','ten','Sun 1:00 PM ET','hou',5.5),
+      game('jax','ne','Sun 1:00 PM ET','ne',2.5),
+      game('gb','det','Sun 1:00 PM ET','det',1.5),
+      game('min','chi','Sun 1:00 PM ET','min',9.5),
+      game('lar','sea','Sun 1:00 PM ET','lar',3.5),
+      game('sf','ari','Sun 1:00 PM ET','sf',13.5),
+      game('no','car','Sun 1:00 PM ET','no',6.5),
+      game('atl','tb','Sun 1:00 PM ET','tb',2.5),
+      game('dal','wsh','Sun 1:00 PM ET','dal',3.5),
+      game('mia','lv','Sun 1:00 PM ET','mia',4.5),
+    ]
+  },
+  // ── WILD CARD ─────────────────────────────────────────────
+  {
+    label: 'Wild Card', short: 'WC', date: 'Jan 10–12, 2026', isPlayoff: true,
+    games: [
+      game('buf','cin','Sat 4:30 PM ET','buf',5.5),
+      game('lac','bal','Sat 8:15 PM ET','bal',4.5),
+      game('den','hou','Sun 1:00 PM ET','hou',3.5),
+      game('dal','det','Sun 4:30 PM ET','det',6.5),
+      game('atl','min','Sun 8:15 PM ET','min',4.5),
+      game('lar','tb','Mon 8:15 PM ET','lar',1.5),
+    ]
+  },
+  // ── DIVISIONAL ────────────────────────────────────────────
+  {
+    label: 'Divisional', short: 'DIV', date: 'Jan 17–19, 2026', isPlayoff: true,
+    games: [
+      game('hou','kc','Sat 4:30 PM ET','kc',7.5),
+      game('buf','bal','Sat 8:15 PM ET','bal',2.5),
+      game('lar','phi','Sun 3:00 PM ET','phi',6.5),
+      game('min','det','Sun 6:30 PM ET','det',3.5),
+    ]
+  },
+  // ── CONF. CHAMPIONSHIPS ───────────────────────────────────
+  {
+    label: 'Conf. Championships', short: 'CC', date: 'Jan 25–26, 2026', isPlayoff: true,
+    games: [
+      game('bal','kc','Sun 3:00 PM ET','kc',3.5),
+      game('det','phi','Sun 6:30 PM ET','phi',1.5),
+    ]
+  },
+  // ── SUPER BOWL ────────────────────────────────────────────
+  {
+    label: 'Super Bowl', short: 'SB', date: 'Feb 8, 2026', isPlayoff: true,
+    games: [
+      game('phi','kc','Sun 6:30 PM ET','kc',4.5),
+    ]
+  },
+];
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+
+const state = {
+  currentRound: -1,   // -1 = landing, 0-21 = rounds, 22 = summary
+  picks: {},          // { roundIndex: 'KC' }
+};
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+
+function logoUrl(abbr) {
+  return `https://a.espncdn.com/i/teamlogos/nfl/500/${abbr.toLowerCase()}.png`;
+}
+
+function teamName(abbr) {
+  const key = abbr.toLowerCase();
+  return TEAMS[key] ? TEAMS[key].name : abbr;
+}
+
+// Short team name (city or nickname)
+const SHORT_NAMES = {
+  kc:'Chiefs', bal:'Ravens', buf:'Bills', cin:'Bengals', cle:'Browns',
+  den:'Broncos', hou:'Texans', ind:'Colts', jax:'Jaguars', lac:'Chargers',
+  lv:'Raiders', mia:'Dolphins', ne:'Patriots', nyj:'Jets', pit:'Steelers',
+  ten:'Titans', ari:'Cardinals', atl:'Falcons', car:'Panthers', chi:'Bears',
+  dal:'Cowboys', det:'Lions', gb:'Packers', lar:'Rams', min:'Vikings',
+  no:'Saints', nyg:'Giants', phi:'Eagles', sf:'49ers', sea:'Seahawks',
+  tb:'Buccaneers', wsh:'Commanders',
+};
+
+function shortName(abbr) {
+  return SHORT_NAMES[abbr.toLowerCase()] || abbr;
+}
+
+// Which rounds (by index) have a conflict?
+function conflictRounds() {
+  const conflicts = new Set();
+  const roundsByTeam = {};
+  Object.entries(state.picks).forEach(([ri, abbr]) => {
+    const team = abbr.toUpperCase();
+    if (!roundsByTeam[team]) roundsByTeam[team] = [];
+    roundsByTeam[team].push(Number(ri));
+  });
+  Object.values(roundsByTeam).forEach(rounds => {
+    if (rounds.length > 1) rounds.forEach(r => conflicts.add(r));
+  });
+  return conflicts;
+}
+
+// Returns { roundIndex, roundLabel } or null
+function usedInRound(abbr) {
+  const team = abbr.toUpperCase();
+  const result = [];
+  Object.entries(state.picks).forEach(([ri, picked]) => {
+    if (picked.toUpperCase() === team) result.push(Number(ri));
+  });
+  return result;
+}
+
+function roundLabel(idx) {
+  if (idx < 18) return `Wk ${idx + 1}`;
+  const map = { 18: 'WC', 19: 'Div', 20: 'CC', 21: 'SB' };
+  return map[idx] || '';
+}
+
+function picksCount() {
+  return Object.keys(state.picks).length;
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER ENGINE
+// ═══════════════════════════════════════════════════════════
+
+function render() {
+  const app = document.getElementById('app');
+  if (state.currentRound === -1) {
+    app.innerHTML = renderLanding();
+  } else if (state.currentRound === 22) {
+    app.innerHTML = renderSummary();
+  } else {
+    app.innerHTML = renderPickScreen(state.currentRound);
+    // Auto-scroll footer to current pill
+    requestAnimationFrame(() => {
+      const pill = document.querySelector('.nav-pill.current');
+      if (pill) {
+        pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    });
+  }
+  bindEvents();
+}
+
+// ── LANDING ─────────────────────────────────────────────────
+
+function renderLanding() {
+  return `
+    <div class="landing">
+      <div class="landing-logo">SPLASH</div>
+      <h1 class="landing-title">Pick Your <span>Path</span></h1>
+      <p class="landing-desc">
+        Map out your entire NFL season — one pick per week, no repeats, all 22 rounds before
+        the first kickoff. Chart your course, lock it in, and watch your path play out.
+      </p>
+      <button class="btn-cta" data-action="start">Let's Go &rarr;</button>
+      <p class="landing-meta">22 rounds &nbsp;&middot;&nbsp; 2025 NFL Season</p>
+    </div>
+  `;
+}
+
+// ── PICK SCREEN ─────────────────────────────────────────────
+
+function renderPickScreen(roundIdx) {
+  const round = ROUNDS[roundIdx];
+  const conflicts = conflictRounds();
+  const made = picksCount();
+
+  return `
+    <div class="pick-screen">
+      ${renderHeader(round.label, made)}
+      ${renderMatchupGrid(roundIdx, round)}
+      ${renderFooter(roundIdx, conflicts)}
+    </div>
+  `;
+}
+
+function renderHeader(label, made) {
+  return `
+    <div class="pick-header">
+      <div class="header-logo">SPLASH</div>
+      <div class="header-round">${label}</div>
+      <div class="header-progress">${made} / 22 picks</div>
+    </div>
+  `;
+}
+
+function renderMatchupGrid(roundIdx, round) {
+  const conflictsRounds = conflictRounds();
+  let conflictBanner = '';
+  if (conflictsRounds.size > 0) {
+    const labels = [...conflictsRounds].sort().map(r => ROUNDS[r].short).join(', ');
+    conflictBanner = `
+      <div class="conflict-banner">
+        &#9888; Conflict detected &mdash; the same team is picked in: ${labels}. Tap a round to fix it.
+      </div>
+    `;
+  }
+
+  const cards = round.games.map((game, gi) => renderMatchupCard(roundIdx, gi, game)).join('');
+
+  return `
+    <div class="round-intro">
+      <h2>${round.label}</h2>
+      <p>${round.date}${round.byeTeams ? ` &middot; Bye: ${round.byeTeams.join(', ')}` : ''}</p>
+    </div>
+    ${conflictBanner}
+    <div class="matchup-grid">${cards}</div>
+  `;
+}
+
+function renderMatchupCard(roundIdx, gameIdx, game) {
+  const pickedTeam = state.picks[roundIdx] || null;
+
+  const awayUsedIn = usedInRound(game.away).filter(r => r !== roundIdx);
+  const homeUsedIn = usedInRound(game.home).filter(r => r !== roundIdx);
+
+  const awayUsed = awayUsedIn.length > 0;
+  const homeUsed = homeUsedIn.length > 0;
+  const bothUsed = awayUsed && homeUsed;
+
+  const awaySelected = pickedTeam && pickedTeam.toUpperCase() === game.away.toUpperCase();
+  const homeSelected = pickedTeam && pickedTeam.toUpperCase() === game.home.toUpperCase();
+
+  const cardClass = `matchup-card${bothUsed ? ' both-used' : ''}${(awaySelected || homeSelected) ? ' has-selection' : ''}`;
+
+  function usedLabel(usedIn) {
+    if (!usedIn.length) return '';
+    const labels = usedIn.map(r => roundLabel(r)).join(', ');
+    return `<div class="team-used-label">Used ${labels}</div>`;
+  }
+
+  function checkBadge() {
+    return `<div class="check-badge"><svg viewBox="0 0 13 10" fill="none"><path d="M1.5 5L5 8.5L11.5 1.5" stroke="#0A0E1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
+  }
+
+  return `
+    <div class="${cardClass}">
+      <div class="card-time">${game.time}</div>
+      <div class="team-row${awaySelected ? ' selected-team' : ''}${awayUsed ? ' used-team' : ''}"
+           data-action="pick" data-round="${roundIdx}" data-team="${game.away}"
+           ${awayUsed ? '' : ''}>
+        <img class="team-logo" src="${logoUrl(game.away)}" alt="${game.away}" onerror="this.style.display='none'" />
+        <div class="team-info">
+          <div class="team-name">${shortName(game.away)}</div>
+          <div class="team-spread">${game.awaySpread}</div>
+          ${usedLabel(awayUsedIn)}
+        </div>
+        ${awaySelected ? checkBadge() : ''}
+      </div>
+      <div class="vs-sep">@</div>
+      <div class="team-row${homeSelected ? ' selected-team' : ''}${homeUsed ? ' used-team' : ''}"
+           data-action="pick" data-round="${roundIdx}" data-team="${game.home}"
+           ${homeUsed ? '' : ''}>
+        <img class="team-logo" src="${logoUrl(game.home)}" alt="${game.home}" onerror="this.style.display='none'" />
+        <div class="team-info">
+          <div class="team-name">${shortName(game.home)}</div>
+          <div class="team-spread">${game.homeSpread}</div>
+          ${usedLabel(homeUsedIn)}
+        </div>
+        ${homeSelected ? checkBadge() : ''}
+      </div>
+    </div>
+  `;
+}
+
+function renderFooter(currentIdx, conflicts) {
+  const pills = ROUNDS.map((round, i) => {
+    const isCurrent = i === currentIdx;
+    const hasPick = state.picks[i] !== undefined;
+    const isConflict = conflicts.has(i);
+    const isPlayoffStart = i === 18;
+
+    let cls = 'nav-pill';
+    if (isCurrent) cls += ' current';
+    else if (isConflict) cls += ' conflict';
+    else if (hasPick) cls += ' picked';
+
+    const check = hasPick && !isCurrent ? '<span class="pill-check">&#10003;</span>' : '';
+    const divider = isPlayoffStart ? '<div class="footer-divider"></div>' : '';
+
+    return `${divider}<button class="${cls}" data-action="nav" data-round="${i}">${round.short}${check}</button>`;
+  }).join('');
+
+  return `<div class="footer-nav" id="footer-nav">${pills}</div>`;
+}
+
+// ── SUMMARY ─────────────────────────────────────────────────
+
+function renderSummary() {
+  const regularRows = ROUNDS.slice(0, 18).map((round, i) => renderSummaryRow(i, round)).join('');
+  const playoffRows = ROUNDS.slice(18).map((round, i) => renderSummaryRow(i + 18, round)).join('');
+
+  return `
+    <div class="summary-screen">
+      <div class="summary-header">
+        <div class="summary-wordmark">SPLASH</div>
+        <h1 class="summary-title">Your Path</h1>
+        <p class="summary-sub">Here are all the teams you need to win.</p>
+      </div>
+      <div class="summary-body">
+        <div class="summary-section-label">Regular Season</div>
+        ${regularRows}
+        <div class="summary-section-label" style="margin-top:12px">Playoffs</div>
+        ${playoffRows}
+      </div>
+      <div class="summary-actions">
+        <button class="btn-share" data-action="share">Share My Path</button>
+        <button class="btn-edit-link" data-action="edit">&larr; Edit Picks</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderSummaryRow(roundIdx, round) {
+  const pick = state.picks[roundIdx];
+  if (!pick) {
+    return `
+      <div class="summary-row">
+        <div class="summary-round-label">${round.label}</div>
+        <span class="summary-empty">No pick made</span>
+      </div>
+    `;
+  }
+
+  // Find opponent
+  const pickedGame = round.games.find(g =>
+    g.away.toUpperCase() === pick.toUpperCase() || g.home.toUpperCase() === pick.toUpperCase()
+  );
+  let opponent = '—';
+  if (pickedGame) {
+    opponent = pickedGame.away.toUpperCase() === pick.toUpperCase()
+      ? shortName(pickedGame.home)
+      : shortName(pickedGame.away);
+  }
+
+  return `
+    <div class="summary-row">
+      <div class="summary-round-label">${round.label}</div>
+      <img class="summary-team-logo" src="${logoUrl(pick)}" alt="${pick}" onerror="this.style.display='none'" />
+      <div class="summary-team-name">${shortName(pick)}</div>
+      <div class="summary-vs">vs. ${opponent}</div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════
+// EVENT BINDING
+// ═══════════════════════════════════════════════════════════
+
+function bindEvents() {
+  document.querySelectorAll('[data-action]').forEach(el => {
+    el.addEventListener('click', handleAction);
+  });
+}
+
+function handleAction(e) {
+  const el = e.currentTarget;
+  const action = el.dataset.action;
+
+  if (action === 'start') {
+    state.currentRound = 0;
+    render();
+  }
+
+  else if (action === 'pick') {
+    const roundIdx = Number(el.dataset.round);
+    const team = el.dataset.team;
+
+    // If clicking an already-used team (used in another round), do nothing
+    const usedIn = usedInRound(team).filter(r => r !== roundIdx);
+    if (usedIn.length > 0) return;
+
+    // Toggle off if re-clicking same team
+    if (state.picks[roundIdx] && state.picks[roundIdx].toUpperCase() === team.toUpperCase()) {
+      delete state.picks[roundIdx];
+      render();
+      return;
+    }
+
+    state.picks[roundIdx] = team.toUpperCase();
+    render();
+
+    // Auto-advance after 400ms
+    setTimeout(() => {
+      const nextRound = roundIdx + 1;
+      if (nextRound <= 21) {
+        state.currentRound = nextRound;
+      } else {
+        state.currentRound = 22; // summary
+      }
+      render();
+    }, 400);
+  }
+
+  else if (action === 'nav') {
+    const roundIdx = Number(el.dataset.round);
+    state.currentRound = roundIdx;
+    render();
+  }
+
+  else if (action === 'share') {
+    alert('🏈 Your path has been locked in! Share feature coming soon.');
+  }
+
+  else if (action === 'edit') {
+    // Go to last round with a pick, or round 0
+    let lastPicked = 0;
+    Object.keys(state.picks).forEach(ri => {
+      if (Number(ri) > lastPicked) lastPicked = Number(ri);
+    });
+    state.currentRound = lastPicked;
+    render();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+
+render();
+</script>
+</body>
+</html>
