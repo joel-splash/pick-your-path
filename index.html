@@ -19,6 +19,7 @@
     --radius-card: 12px;
     --radius-btn: 8px;
     --footer-h: 64px;
+    --header-h: 57px;
   }
 
   html, body {
@@ -40,7 +41,7 @@
     justify-content: center;
     padding: 40px 24px;
     text-align: center;
-    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,210,106,0.08) 0%, transparent 70%);
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(27,196,207,0.08) 0%, transparent 70%);
   }
 
   .landing-logo {
@@ -117,6 +118,7 @@
     align-items: center;
     padding: 14px 20px;
     gap: 12px;
+    height: var(--header-h);
   }
 
   .header-logo {
@@ -140,6 +142,147 @@
     color: var(--text-secondary);
     text-align: right;
     white-space: nowrap;
+  }
+
+  /* ── PICK LAYOUT (main + sidebar) ─────────────────────── */
+  .pick-layout {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .pick-main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* ── SIDEBAR ───────────────────────────────────────────── */
+  .picks-sidebar {
+    width: 210px;
+    flex-shrink: 0;
+    position: sticky;
+    top: var(--header-h);
+    height: calc(100vh - var(--header-h) - var(--footer-h));
+    overflow-y: auto;
+    border-left: 1px solid var(--card-border);
+    padding: 16px 14px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--card-border) transparent;
+  }
+
+  .picks-sidebar::-webkit-scrollbar { width: 4px; }
+  .picks-sidebar::-webkit-scrollbar-track { background: transparent; }
+  .picks-sidebar::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 2px; }
+
+  .sidebar-title {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .sidebar-empty {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(30,37,56,0.5);
+    animation: fadeSlideIn 0.25s ease;
+  }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateX(8px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .sidebar-logo {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .sidebar-team-name {
+    flex: 1;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sidebar-week {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(27,196,207,0.12);
+    padding: 2px 6px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    letter-spacing: 0.03em;
+  }
+
+  /* Mobile sidebar: horizontal strip */
+  @media (max-width: 900px) {
+    .pick-layout { flex-direction: column; }
+
+    .picks-sidebar {
+      width: 100%;
+      position: static;
+      height: auto;
+      max-height: 110px;
+      border-left: none;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .sidebar-title {
+      font-size: 9px;
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .sidebar-empty {
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .sidebar-item {
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 6px 8px;
+      border-bottom: none;
+      border-radius: 8px;
+      background: var(--card-bg);
+      flex-shrink: 0;
+      animation: none;
+    }
+
+    .sidebar-team-name { font-size: 10px; text-align: center; }
+    .sidebar-week { font-size: 9px; padding: 1px 5px; }
+    .sidebar-logo { width: 24px; height: 24px; }
   }
 
   /* Round intro */
@@ -211,7 +354,7 @@
   .team-row:hover:not(.used-team) { background: rgba(255,255,255,0.04); }
 
   .team-row.selected-team {
-    background: rgba(0, 210, 106, 0.1);
+    background: rgba(27, 196, 207, 0.1);
   }
 
   .team-row.used-team {
@@ -248,8 +391,9 @@
     font-size: 10px;
     font-weight: 600;
     color: var(--conflict);
-    margin-top: 2px;
-    letter-spacing: 0.04em;
+    margin-top: 3px;
+    letter-spacing: 0.03em;
+    line-height: 1.3;
   }
 
   .check-badge {
@@ -289,7 +433,7 @@
   /* Selected card border */
   .matchup-card.has-selection {
     border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent), 0 4px 20px rgba(0,210,106,0.12);
+    box-shadow: 0 0 0 1px var(--accent), 0 4px 20px rgba(27,196,207,0.12);
   }
 
   /* ── FOOTER NAV ────────────────────────────────────────── */
@@ -311,17 +455,10 @@
     scrollbar-width: none;
     padding: 0 12px;
     gap: 6px;
+    scroll-behavior: smooth;
   }
 
   .footer-nav::-webkit-scrollbar { display: none; }
-
-  .footer-divider {
-    width: 1px;
-    height: 24px;
-    background: var(--card-border);
-    flex-shrink: 0;
-    margin: 0 4px;
-  }
 
   .nav-pill {
     flex-shrink: 0;
@@ -374,7 +511,7 @@
   .summary-header {
     text-align: center;
     padding: 48px 24px 32px;
-    background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(0,210,106,0.1) 0%, transparent 70%);
+    background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(27,196,207,0.1) 0%, transparent 70%);
   }
 
   .summary-wordmark {
@@ -509,9 +646,6 @@
     margin-left: auto;
     margin-right: auto;
   }
-
-  /* Scroll snap helper for footer */
-  .footer-nav { scroll-behavior: smooth; }
 </style>
 </head>
 <body>
@@ -557,7 +691,6 @@ const TEAMS = {
   wsh: { name: 'Washington Commanders',    abbr: 'WSH' },
 };
 
-// Bye weeks: key = abbr lowercase, value = week number (1-indexed)
 const BYE_WEEKS = {
   kc:5, bal:5, ari:5, atl:5,
   buf:6, cin:6, car:6, chi:6,
@@ -569,11 +702,6 @@ const BYE_WEEKS = {
   pit:12, ten:12, tb:12, wsh:12,
 };
 
-// Helper to build a game object
-const g = (away, home, time, spread, label) => ({ away, home, time, spread, label });
-// spread: positive => away favored by |spread|, negative => home favored by |spread|
-// Actually we encode as: favored team gets the negative number, other gets +
-// We'll store as { awaySpread, homeSpread }
 const game = (away, home, time, favoredTeam, spreadVal) => {
   const awaySpread = favoredTeam === away ? `-${spreadVal}` : `+${spreadVal}`;
   const homeSpread = favoredTeam === home ? `-${spreadVal}` : `+${spreadVal}`;
@@ -971,51 +1099,18 @@ const ROUNDS = [
       game('mia','lv','Sun 1:00 PM ET','mia',4.5),
     ]
   },
-  // ── WILD CARD ─────────────────────────────────────────────
-  {
-    label: 'Wild Card', short: 'WC', date: 'Jan 10–12, 2026', isPlayoff: true,
-    games: [
-      game('buf','cin','Sat 4:30 PM ET','buf',5.5),
-      game('lac','bal','Sat 8:15 PM ET','bal',4.5),
-      game('den','hou','Sun 1:00 PM ET','hou',3.5),
-      game('dal','det','Sun 4:30 PM ET','det',6.5),
-      game('atl','min','Sun 8:15 PM ET','min',4.5),
-      game('lar','tb','Mon 8:15 PM ET','lar',1.5),
-    ]
-  },
-  // ── DIVISIONAL ────────────────────────────────────────────
-  {
-    label: 'Divisional', short: 'DIV', date: 'Jan 17–19, 2026', isPlayoff: true,
-    games: [
-      game('hou','kc','Sat 4:30 PM ET','kc',7.5),
-      game('buf','bal','Sat 8:15 PM ET','bal',2.5),
-      game('lar','phi','Sun 3:00 PM ET','phi',6.5),
-      game('min','det','Sun 6:30 PM ET','det',3.5),
-    ]
-  },
-  // ── CONF. CHAMPIONSHIPS ───────────────────────────────────
-  {
-    label: 'Conf. Championships', short: 'CC', date: 'Jan 25–26, 2026', isPlayoff: true,
-    games: [
-      game('bal','kc','Sun 3:00 PM ET','kc',3.5),
-      game('det','phi','Sun 6:30 PM ET','phi',1.5),
-    ]
-  },
-  // ── SUPER BOWL ────────────────────────────────────────────
-  {
-    label: 'Super Bowl', short: 'SB', date: 'Feb 8, 2026', isPlayoff: true,
-    games: [
-      game('phi','kc','Sun 6:30 PM ET','kc',4.5),
-    ]
-  },
 ];
+
+// Total rounds = 18
+const TOTAL_ROUNDS = 18;
+const SUMMARY_STATE = 18;
 
 // ═══════════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════════
 
 const state = {
-  currentRound: -1,   // -1 = landing, 0-21 = rounds, 22 = summary
+  currentRound: -1,   // -1 = landing, 0–17 = rounds, 18 = summary
   picks: {},          // { roundIndex: 'KC' }
 };
 
@@ -1032,7 +1127,6 @@ function teamName(abbr) {
   return TEAMS[key] ? TEAMS[key].name : abbr;
 }
 
-// Short team name (city or nickname)
 const SHORT_NAMES = {
   kc:'Chiefs', bal:'Ravens', buf:'Bills', cin:'Bengals', cle:'Browns',
   den:'Broncos', hou:'Texans', ind:'Colts', jax:'Jaguars', lac:'Chargers',
@@ -1047,7 +1141,6 @@ function shortName(abbr) {
   return SHORT_NAMES[abbr.toLowerCase()] || abbr;
 }
 
-// Which rounds (by index) have a conflict?
 function conflictRounds() {
   const conflicts = new Set();
   const roundsByTeam = {};
@@ -1062,20 +1155,33 @@ function conflictRounds() {
   return conflicts;
 }
 
-// Returns { roundIndex, roundLabel } or null
-function usedInRound(abbr) {
+// Returns array of round indices where this team was picked (excluding current round)
+function usedInRound(abbr, excludeRound) {
   const team = abbr.toUpperCase();
   const result = [];
   Object.entries(state.picks).forEach(([ri, picked]) => {
-    if (picked.toUpperCase() === team) result.push(Number(ri));
+    const idx = Number(ri);
+    if (idx !== excludeRound && picked.toUpperCase() === team) result.push(idx);
   });
   return result;
 }
 
+// Given a round index and team abbr, find that team's opponent in that round
+function opponentInRound(roundIdx, teamAbbr) {
+  const round = ROUNDS[roundIdx];
+  if (!round) return null;
+  const matchup = round.games.find(g =>
+    g.away.toUpperCase() === teamAbbr.toUpperCase() ||
+    g.home.toUpperCase() === teamAbbr.toUpperCase()
+  );
+  if (!matchup) return null;
+  return matchup.away.toUpperCase() === teamAbbr.toUpperCase()
+    ? matchup.home
+    : matchup.away;
+}
+
 function roundLabel(idx) {
-  if (idx < 18) return `Wk ${idx + 1}`;
-  const map = { 18: 'WC', 19: 'Div', 20: 'CC', 21: 'SB' };
-  return map[idx] || '';
+  return `W${idx + 1}`;
 }
 
 function picksCount() {
@@ -1090,11 +1196,10 @@ function render() {
   const app = document.getElementById('app');
   if (state.currentRound === -1) {
     app.innerHTML = renderLanding();
-  } else if (state.currentRound === 22) {
+  } else if (state.currentRound === SUMMARY_STATE) {
     app.innerHTML = renderSummary();
   } else {
     app.innerHTML = renderPickScreen(state.currentRound);
-    // Auto-scroll footer to current pill
     requestAnimationFrame(() => {
       const pill = document.querySelector('.nav-pill.current');
       if (pill) {
@@ -1113,11 +1218,12 @@ function renderLanding() {
       <div class="landing-logo">SPLASH</div>
       <h1 class="landing-title">Pick Your <span>Path</span></h1>
       <p class="landing-desc">
-        Map out your entire NFL season — one pick per week, no repeats, all 22 rounds before
-        the first kickoff. Chart your course, lock it in, and watch your path play out.
+        Map out your entire NFL regular season — one pick per week, no repeats,
+        all 18 weeks before the first kickoff. Chart your course, lock it in,
+        and watch your path play out.
       </p>
       <button class="btn-cta" data-action="start">Let's Go &rarr;</button>
-      <p class="landing-meta">22 rounds &nbsp;&middot;&nbsp; 2025 NFL Season</p>
+      <p class="landing-meta">18 weeks &nbsp;&middot;&nbsp; 2025 NFL Season</p>
     </div>
   `;
 }
@@ -1132,7 +1238,12 @@ function renderPickScreen(roundIdx) {
   return `
     <div class="pick-screen">
       ${renderHeader(round.label, made)}
-      ${renderMatchupGrid(roundIdx, round)}
+      <div class="pick-layout">
+        <div class="pick-main">
+          ${renderMatchupGrid(roundIdx, round)}
+        </div>
+        ${renderSidebar()}
+      </div>
       ${renderFooter(roundIdx, conflicts)}
     </div>
   `;
@@ -1143,10 +1254,43 @@ function renderHeader(label, made) {
     <div class="pick-header">
       <div class="header-logo">SPLASH</div>
       <div class="header-round">${label}</div>
-      <div class="header-progress">${made} / 22 picks</div>
+      <div class="header-progress">${made} / ${TOTAL_ROUNDS} picks</div>
     </div>
   `;
 }
+
+// ── SIDEBAR ─────────────────────────────────────────────────
+
+function renderSidebar() {
+  const entries = Object.entries(state.picks)
+    .sort(([a], [b]) => Number(a) - Number(b));
+
+  const emptyMsg = entries.length === 0
+    ? '<p class="sidebar-empty">Your picks appear here as you go</p>'
+    : '';
+
+  const items = entries.map(([ri, abbr]) => {
+    const roundIdx = Number(ri);
+    const round = ROUNDS[roundIdx];
+    return `
+      <div class="sidebar-item">
+        <img class="sidebar-logo" src="${logoUrl(abbr)}" alt="${abbr}" onerror="this.style.display='none'" />
+        <div class="sidebar-team-name">${shortName(abbr)}</div>
+        <div class="sidebar-week">${round.short}</div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="picks-sidebar">
+      <div class="sidebar-title">Teams Used</div>
+      ${emptyMsg}
+      ${items}
+    </div>
+  `;
+}
+
+// ── MATCHUP GRID ─────────────────────────────────────────────
 
 function renderMatchupGrid(roundIdx, round) {
   const conflictsRounds = conflictRounds();
@@ -1160,7 +1304,7 @@ function renderMatchupGrid(roundIdx, round) {
     `;
   }
 
-  const cards = round.games.map((game, gi) => renderMatchupCard(roundIdx, gi, game)).join('');
+  const cards = round.games.map((g, gi) => renderMatchupCard(roundIdx, gi, g)).join('');
 
   return `
     <div class="round-intro">
@@ -1172,25 +1316,30 @@ function renderMatchupGrid(roundIdx, round) {
   `;
 }
 
-function renderMatchupCard(roundIdx, gameIdx, game) {
+function renderMatchupCard(roundIdx, gameIdx, g) {
   const pickedTeam = state.picks[roundIdx] || null;
 
-  const awayUsedIn = usedInRound(game.away).filter(r => r !== roundIdx);
-  const homeUsedIn = usedInRound(game.home).filter(r => r !== roundIdx);
+  const awayUsedIn = usedInRound(g.away, roundIdx);
+  const homeUsedIn = usedInRound(g.home, roundIdx);
 
   const awayUsed = awayUsedIn.length > 0;
   const homeUsed = homeUsedIn.length > 0;
   const bothUsed = awayUsed && homeUsed;
 
-  const awaySelected = pickedTeam && pickedTeam.toUpperCase() === game.away.toUpperCase();
-  const homeSelected = pickedTeam && pickedTeam.toUpperCase() === game.home.toUpperCase();
+  const awaySelected = pickedTeam && pickedTeam.toUpperCase() === g.away.toUpperCase();
+  const homeSelected = pickedTeam && pickedTeam.toUpperCase() === g.home.toUpperCase();
 
   const cardClass = `matchup-card${bothUsed ? ' both-used' : ''}${(awaySelected || homeSelected) ? ' has-selection' : ''}`;
 
-  function usedLabel(usedIn) {
+  // Build the "Used W3 vs Raiders" label
+  function usedLabel(usedIn, teamAbbr) {
     if (!usedIn.length) return '';
-    const labels = usedIn.map(r => roundLabel(r)).join(', ');
-    return `<div class="team-used-label">Used ${labels}</div>`;
+    const parts = usedIn.map(r => {
+      const opp = opponentInRound(r, teamAbbr);
+      const oppStr = opp ? ` vs ${shortName(opp)}` : '';
+      return `${roundLabel(r)}${oppStr}`;
+    }).join(', ');
+    return `<div class="team-used-label">Used ${parts}</div>`;
   }
 
   function checkBadge() {
@@ -1199,27 +1348,25 @@ function renderMatchupCard(roundIdx, gameIdx, game) {
 
   return `
     <div class="${cardClass}">
-      <div class="card-time">${game.time}</div>
+      <div class="card-time">${g.time}</div>
       <div class="team-row${awaySelected ? ' selected-team' : ''}${awayUsed ? ' used-team' : ''}"
-           data-action="pick" data-round="${roundIdx}" data-team="${game.away}"
-           ${awayUsed ? '' : ''}>
-        <img class="team-logo" src="${logoUrl(game.away)}" alt="${game.away}" onerror="this.style.display='none'" />
+           data-action="pick" data-round="${roundIdx}" data-team="${g.away}">
+        <img class="team-logo" src="${logoUrl(g.away)}" alt="${g.away}" onerror="this.style.display='none'" />
         <div class="team-info">
-          <div class="team-name">${shortName(game.away)}</div>
-          <div class="team-spread">${game.awaySpread}</div>
-          ${usedLabel(awayUsedIn)}
+          <div class="team-name">${shortName(g.away)}</div>
+          <div class="team-spread">${g.awaySpread}</div>
+          ${usedLabel(awayUsedIn, g.away)}
         </div>
         ${awaySelected ? checkBadge() : ''}
       </div>
       <div class="vs-sep">@</div>
       <div class="team-row${homeSelected ? ' selected-team' : ''}${homeUsed ? ' used-team' : ''}"
-           data-action="pick" data-round="${roundIdx}" data-team="${game.home}"
-           ${homeUsed ? '' : ''}>
-        <img class="team-logo" src="${logoUrl(game.home)}" alt="${game.home}" onerror="this.style.display='none'" />
+           data-action="pick" data-round="${roundIdx}" data-team="${g.home}">
+        <img class="team-logo" src="${logoUrl(g.home)}" alt="${g.home}" onerror="this.style.display='none'" />
         <div class="team-info">
-          <div class="team-name">${shortName(game.home)}</div>
-          <div class="team-spread">${game.homeSpread}</div>
-          ${usedLabel(homeUsedIn)}
+          <div class="team-name">${shortName(g.home)}</div>
+          <div class="team-spread">${g.homeSpread}</div>
+          ${usedLabel(homeUsedIn, g.home)}
         </div>
         ${homeSelected ? checkBadge() : ''}
       </div>
@@ -1227,12 +1374,13 @@ function renderMatchupCard(roundIdx, gameIdx, game) {
   `;
 }
 
+// ── FOOTER ──────────────────────────────────────────────────
+
 function renderFooter(currentIdx, conflicts) {
   const pills = ROUNDS.map((round, i) => {
     const isCurrent = i === currentIdx;
     const hasPick = state.picks[i] !== undefined;
     const isConflict = conflicts.has(i);
-    const isPlayoffStart = i === 18;
 
     let cls = 'nav-pill';
     if (isCurrent) cls += ' current';
@@ -1240,9 +1388,8 @@ function renderFooter(currentIdx, conflicts) {
     else if (hasPick) cls += ' picked';
 
     const check = hasPick && !isCurrent ? '<span class="pill-check">&#10003;</span>' : '';
-    const divider = isPlayoffStart ? '<div class="footer-divider"></div>' : '';
 
-    return `${divider}<button class="${cls}" data-action="nav" data-round="${i}">${round.short}${check}</button>`;
+    return `<button class="${cls}" data-action="nav" data-round="${i}">${round.short}${check}</button>`;
   }).join('');
 
   return `<div class="footer-nav" id="footer-nav">${pills}</div>`;
@@ -1251,8 +1398,7 @@ function renderFooter(currentIdx, conflicts) {
 // ── SUMMARY ─────────────────────────────────────────────────
 
 function renderSummary() {
-  const regularRows = ROUNDS.slice(0, 18).map((round, i) => renderSummaryRow(i, round)).join('');
-  const playoffRows = ROUNDS.slice(18).map((round, i) => renderSummaryRow(i + 18, round)).join('');
+  const rows = ROUNDS.map((round, i) => renderSummaryRow(i, round)).join('');
 
   return `
     <div class="summary-screen">
@@ -1262,10 +1408,8 @@ function renderSummary() {
         <p class="summary-sub">Here are all the teams you need to win.</p>
       </div>
       <div class="summary-body">
-        <div class="summary-section-label">Regular Season</div>
-        ${regularRows}
-        <div class="summary-section-label" style="margin-top:12px">Playoffs</div>
-        ${playoffRows}
+        <div class="summary-section-label">2025 Regular Season</div>
+        ${rows}
       </div>
       <div class="summary-actions">
         <button class="btn-share" data-action="share">Share My Path</button>
@@ -1286,7 +1430,6 @@ function renderSummaryRow(roundIdx, round) {
     `;
   }
 
-  // Find opponent
   const pickedGame = round.games.find(g =>
     g.away.toUpperCase() === pick.toUpperCase() || g.home.toUpperCase() === pick.toUpperCase()
   );
@@ -1330,11 +1473,11 @@ function handleAction(e) {
     const roundIdx = Number(el.dataset.round);
     const team = el.dataset.team;
 
-    // If clicking an already-used team (used in another round), do nothing
-    const usedIn = usedInRound(team).filter(r => r !== roundIdx);
+    // Block clicks on used teams
+    const usedIn = usedInRound(team, roundIdx);
     if (usedIn.length > 0) return;
 
-    // Toggle off if re-clicking same team
+    // Toggle off if re-clicking same pick
     if (state.picks[roundIdx] && state.picks[roundIdx].toUpperCase() === team.toUpperCase()) {
       delete state.picks[roundIdx];
       render();
@@ -1347,18 +1490,17 @@ function handleAction(e) {
     // Auto-advance after 400ms
     setTimeout(() => {
       const nextRound = roundIdx + 1;
-      if (nextRound <= 21) {
+      if (nextRound < TOTAL_ROUNDS) {
         state.currentRound = nextRound;
       } else {
-        state.currentRound = 22; // summary
+        state.currentRound = SUMMARY_STATE;
       }
       render();
     }, 400);
   }
 
   else if (action === 'nav') {
-    const roundIdx = Number(el.dataset.round);
-    state.currentRound = roundIdx;
+    state.currentRound = Number(el.dataset.round);
     render();
   }
 
@@ -1367,7 +1509,6 @@ function handleAction(e) {
   }
 
   else if (action === 'edit') {
-    // Go to last round with a pick, or round 0
     let lastPicked = 0;
     Object.keys(state.picks).forEach(ri => {
       if (Number(ri) > lastPicked) lastPicked = Number(ri);
